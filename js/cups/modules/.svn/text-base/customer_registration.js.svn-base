@@ -1,0 +1,49 @@
+function CustomerRegistrationModule(params) {
+    return function(sb){
+        var _validator;
+
+
+        /**
+         * Assign e-mail validator
+         */
+        var _assignValidator = function() {
+            _validator = sb.$('form').validate(params && params.validateParams || {});
+        };
+
+
+        /**
+         * Process registration form submit
+         */
+        var _onSubmit = function(e) {
+            e.preventDefault();
+            var email = sb.$('input[name=email]').val();
+
+            sb.Customer.register(
+                email,
+                function(){
+                    var message = '<b>' + i18n.thankyou_for_your_interest +'</b><br />' +  i18n.registration_letter_sent.replace('%email%', email);
+                    sb.UI.showMessage({
+//                        title   : i18n.thankyou_for_your_interest,
+//                        message : i18n.registration_letter_sent.replace('%email%', email)
+//                        title   : i18n.thankyou_for_your_interest,
+                        message : message
+                    });
+                },
+                function(message){
+                    _validator.showErrors({email: message});
+                }
+            );
+        };
+
+
+        return {
+            //init module
+            init : function(){
+                _assignValidator();
+                sb.bind('', 'submit', _onSubmit);
+            },
+            //destroy module
+            destroy : function(){}
+        };
+    }
+}

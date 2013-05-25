@@ -1,0 +1,141 @@
+function OrderCheckoutModule() {
+    return function(sb){
+        var _productList    = {},
+            _basketTotals   = {},
+            _deliveryCost   = 0,
+            _data = {
+                address_id          : 0,
+                delivery_id         : 0,
+                payment_id          : 0,
+                phone_is_confirmed  : 0
+            };
+
+
+        var _init = function() {
+        };
+
+
+        var _onPrev = function(e) {
+            e.preventDefault();
+            sb.$self().slideUp();
+
+            sb.publish({
+                type : 'order-checkout-prev'
+            });
+        };
+
+
+        var _redrawTotals = function() {
+            var deliveryCostText = _deliveryCost ? sb.Price.makeBaks(_deliveryCost) + ' ' + i18n.currency : '';
+            sb.$('p.delivery-cost > span.value').html(deliveryCostText);
+
+            sb.$('p.total-with-discount > span.value').html(sb.Price.makeBaks(parseInt(_basketTotals.totalPrice) + _deliveryCost) + ' ' + i18n.currency);
+        };
+
+        var _onCheckIsFormDataValid = function(e) {
+            if(_data.address_id == 0 || _data.delivery_id == 0 || _data.payment_id == 0 || _data.phone_is_confirmed == 0){
+                e.preventDefault();
+                sb.UI.showError(i18n.fill_required_fields);
+            }
+        };
+
+
+        var _bindEvents = function() {
+            sb.bind('a.checkout-prev', 'click', _onPrev);
+            sb.bind('#place-order', 'click', _onCheckIsFormDataValid);
+        };
+
+
+
+        var _onChangeProducts   = function(data){
+            var tmpl, i, product;
+
+            tmpl = sb.tmpl('#checkout-product-item');
+            sb.$('ul.order-list').html('');
+
+            _productList = data.productList;
+
+            for (i in _productList) {
+                if (!_productList.hasOwnProperty(i)) return;
+                product = _productList[i];
+
+                sb.$('ul.order-list').append(sb.render(tmpl, {
+                    product     : product,
+                    totalPrice  : product.amount * product.boArticle.sellPrice
+                }));
+            }
+        };
+
+
+        var _onChangeTotals = function(data){
+            _basketTotals = data.boBasketTotals;
+            _redrawTotals();
+        };
+
+
+        var _onCheckoutAgreeNext = function(data){
+            sb.$self().slideDown().removeClass('hidden');
+        };
+
+
+
+        var _onAddressSelect = function(data) {
+            _data.delivery_id = 0;
+            _data.payment_id  = 0;
+            _data.phone_is_confirmed = 0;
+            _data.address_id = data.addressId || 0;
+        };
+
+
+        var _onDeliverySelect = function(data) {
+            _data.delivery_id = 0;
+            _data.payment_id  = 0;
+            _data.phone_is_confirmed = 0;
+            _deliveryCost     = 0;
+
+            if (data.boDeliveryMethod) {
+                _data.delivery_id = data.boDeliveryMethod.id || 0;
+                _deliveryCost = parseInt(data.boDeliveryMethod.this_delivery_cost) || 0;
+            }
+
+            _redrawTotals();
+        };
+
+
+        var _onPaymentSelect = function(data) {
+            _data.phone_is_confirmed = 0;
+            _data.payment_id = data.paymentMethodId || 0;
+        };
+
+
+        var _onPhoneConfirmed = function() {
+            _data.phone_is_confirmed = 1;
+        };
+
+
+
+        var _onPhoneNotConfirmed = function() {
+            _data.phone_is_confirmed = 0;
+        };
+
+
+
+        return {
+            init : function(){
+                _init();
+                sb.subscribe({
+                    'basket-change-products'                                    : _onChangeProducts,
+                    'basket-change-totals'                                      : _onChangeTotals,
+                    'checkout-agree-next'                                       : _onCheckoutAgreeNext,
+                    'order-checkout-delivery-payment:select-delivery'           : _onDeliverySelect,
+                    'order-checkout-address:select'                             : _onAddressSelect,
+                    'order-checkout-delivery-payment:select-payment'            : _onPaymentSelect,
+                    'order-checkout-phone-confirmation:confirmated-phone'       : _onPhoneConfirmed,
+                    'order-checkout-phone-confirmation:not-confirmated-phone'   : _onPhoneNotConfirmed
+                });
+                _bindEvents();
+            },
+            destroy : function(){ }
+        };
+    }
+}

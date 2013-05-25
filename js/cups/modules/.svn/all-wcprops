@@ -1,0 +1,197 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/anew/!svn/ver/8789/branches/dev11-49/sites/arena/web/js/best/modules
+END
+customer_widget.js
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/anew/!svn/ver/8478/branches/dev11-49/sites/arena/web/js/best/modules/customer_widget.js
+END
+order_checkout_address.js
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/anew/!svn/ver/8646/branches/dev11-49/sites/arena/web/js/best/modules/order_checkout_address.js
+END
+checkout_agree.js
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/anew/!svn/ver/8589/branches/dev11-49/sites/arena/web/js/best/modules/checkout_agree.js
+END
+checkout_agree_not_logged.js
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/anew/!svn/ver/8589/branches/dev11-49/sites/arena/web/js/best/modules/checkout_agree_not_logged.js
+END
+customer_personal_info.js
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/anew/!svn/ver/8629/branches/dev11-49/sites/arena/web/js/best/modules/customer_personal_info.js
+END
+customer_registration_restore_password.js
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/anew/!svn/ver/8712/branches/dev11-49/sites/arena/web/js/best/modules/customer_registration_restore_password.js
+END
+customer_registration_change_password.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/anew/!svn/ver/8658/branches/dev11-49/sites/arena/web/js/best/modules/customer_registration_change_password.js
+END
+customer_add_new_address.js
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/anew/!svn/ver/8690/branches/dev11-49/sites/arena/web/js/best/modules/customer_add_new_address.js
+END
+customer_edit_password.js
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/anew/!svn/ver/8706/branches/dev11-49/sites/arena/web/js/best/modules/customer_edit_password.js
+END
+customer_login.js
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/anew/!svn/ver/8486/branches/dev11-49/sites/arena/web/js/best/modules/customer_login.js
+END
+basket_model.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/anew/!svn/ver/8748/branches/dev11-49/sites/arena/web/js/best/modules/basket_model.js
+END
+customer_registration.js
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/anew/!svn/ver/8354/branches/dev11-49/sites/arena/web/js/best/modules/customer_registration.js
+END
+customer_registration_finish.js
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/anew/!svn/ver/8420/branches/dev11-49/sites/arena/web/js/best/modules/customer_registration_finish.js
+END
+language_switcher.js
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/anew/!svn/ver/8332/branches/dev11-49/sites/arena/web/js/best/modules/language_switcher.js
+END
+basket_amount.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/anew/!svn/ver/8748/branches/dev11-49/sites/arena/web/js/best/modules/basket_amount.js
+END
+bottom_catalog.js
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/anew/!svn/ver/8381/branches/dev11-49/sites/arena/web/js/best/modules/bottom_catalog.js
+END
+order_checkout.js
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/anew/!svn/ver/8748/branches/dev11-49/sites/arena/web/js/best/modules/order_checkout.js
+END
+product_detail.js
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/anew/!svn/ver/8748/branches/dev11-49/sites/arena/web/js/best/modules/product_detail.js
+END
+order_checkout_add_address.js
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/anew/!svn/ver/8538/branches/dev11-49/sites/arena/web/js/best/modules/order_checkout_add_address.js
+END
+basket_edit.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/anew/!svn/ver/8748/branches/dev11-49/sites/arena/web/js/best/modules/basket_edit.js
+END
+place_order.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/anew/!svn/ver/8681/branches/dev11-49/sites/arena/web/js/best/modules/place_order.js
+END
+product_slider.js
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/anew/!svn/ver/8621/branches/dev11-49/sites/arena/web/js/best/modules/product_slider.js
+END
+coupon_activation.js
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/anew/!svn/ver/8789/branches/dev11-49/sites/arena/web/js/best/modules/coupon_activation.js
+END
+promotion_slider.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/anew/!svn/ver/8147/branches/dev11-49/sites/arena/web/js/best/modules/promotion_slider.js
+END
+customer_address_form.js
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/anew/!svn/ver/8715/branches/dev11-49/sites/arena/web/js/best/modules/customer_address_form.js
+END
+image_navigator.js
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/anew/!svn/ver/8726/branches/dev11-49/sites/arena/web/js/best/modules/image_navigator.js
+END
+order_detail.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/anew/!svn/ver/8748/branches/dev11-49/sites/arena/web/js/best/modules/order_detail.js
+END
+sidebar_menu.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/anew/!svn/ver/8666/branches/dev11-49/sites/arena/web/js/best/modules/sidebar_menu.js
+END
+basket_totals.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/anew/!svn/ver/8748/branches/dev11-49/sites/arena/web/js/best/modules/basket_totals.js
+END
+order_checkout_delivery_payment.js
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/anew/!svn/ver/8646/branches/dev11-49/sites/arena/web/js/best/modules/order_checkout_delivery_payment.js
+END
+order_checkout_phone_confirmation.js
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/anew/!svn/ver/8754/branches/dev11-49/sites/arena/web/js/best/modules/order_checkout_phone_confirmation.js
+END
+customer_edit_addresses.js
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/anew/!svn/ver/8690/branches/dev11-49/sites/arena/web/js/best/modules/customer_edit_addresses.js
+END

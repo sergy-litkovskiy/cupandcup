@@ -1,0 +1,1 @@
+var BoBasketTotals = BEST.Core.BoBase.extend(['amount', 'totalPrice', 'discount', 'discountPrice']);

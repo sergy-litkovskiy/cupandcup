@@ -1,0 +1,99 @@
+function OrderCheckoutAddressModule() {
+    return function(sb){
+        var _addressList = {},
+            _data = {
+                address_id  : 0
+            };
+
+
+        var _init = function() {
+            sb.Address.getList(function(boCustAddressList) {
+                _addressList = boCustAddressList;
+                _renderAddressList();
+            });
+        };
+
+
+
+        var _show = function() {
+            sb.$self().fadeIn();
+        };
+
+
+
+        var _hide = function(cb) {
+            sb.$self().fadeOut(cb);
+        };
+
+
+
+        var _renderAddressList = function () {
+            var tmpl = '<option></option>{{#addressList}}<option value="{{id}}">{{description}}</option>{{/addressList}}';
+            sb.$('#field-address-name').html(sb.render(tmpl, {addressList : _addressList}));
+        };
+
+
+
+        var _onAddAddressClick = function(e) {
+            e.preventDefault();
+            sb.$('#field-address-name option:first').attr('selected', true);
+            _hide(function(){
+                sb.publish({
+                    type : 'order-checkout-address:add-new'
+                });
+            });
+        };
+
+
+
+        var _onAddressSelect = function() {
+            _data.address_id = sb.$wrap(this).find('option:selected').val() || 0;
+            sb.publish({
+                type : 'order-checkout-address:select',
+                data : {
+                    addressId : _data.address_id
+                }
+            });
+        };
+
+
+
+        var _onNewAddressSaved = function(data) {
+            var boCustAddress = data.boCustAddress;
+
+            _data.address_id = boCustAddress.id;
+            _addressList.push(boCustAddress);
+            _renderAddressList();
+
+            sb.$('#field-address-name option[value=' + boCustAddress.id + ']').attr('selected', true);
+            sb.publish({
+                type : 'order-checkout-address:select',
+                data : {
+                    addressId : _data.address_id
+                }
+            });
+            _show();
+        };
+
+
+
+        var _bindEvents = function() {
+            sb.bind('a.add-address-link', 'click', _onAddAddressClick);
+            sb.bind('#field-address-name', 'change', _onAddressSelect);
+        };
+
+
+
+        return {
+            init : function(){
+                _init();
+                sb.subscribe({
+                    'order-checkout-new-address:cancel' : _show,
+                    'order-checkout-new-address:save'   : _onNewAddressSaved
+                });
+                _bindEvents();
+            },
+            destroy : function(){ }
+        };
+    }
+}

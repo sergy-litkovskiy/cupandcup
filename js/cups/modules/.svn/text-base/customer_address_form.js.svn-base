@@ -1,0 +1,107 @@
+function CustomerAddressFormModule() {
+    return function(sb){
+        var _validator;
+
+        var _assignValidator = function(e) {
+            _validator = sb.$('form').validate({
+                rules: {
+                    postal_code: {
+                        required: true
+                        , minlength: 5
+                        , maxlength: 5
+                        , digits : true
+                    },
+                    alt_city: {
+                        required: true
+                    },
+                    order_addr_area_id: {
+                        required: true
+                    },
+                    addr_city_id: {
+                        required: true
+                    }
+                }
+                ,messages     : {
+                    postal_code : {
+                        digits    : i18n.number_field
+                      , minlength : i18n.postal_code_min_max5digits_message
+                      , maxlength : i18n.postal_code_min_max5digits_message
+                    }
+                }
+            });
+        };
+
+
+        var _init = function(e) {
+            sb.$self().hide();
+            sb.Address.citySelect({
+                area_el : 'select[name=order_addr_area_id]'
+            });
+        };
+
+
+        var _onCustomerAddressEdit = function(data) {
+            var boCustAddress = data.boCustAddress;
+            _fillForm(boCustAddress);
+            sb.$self().fadeIn();
+        };
+
+
+        var _fillForm = function(boCustAddress) {
+
+            var idVal = boCustAddress.id ? boCustAddress.id : '';
+            sb.$('input[name=adr_id]').val(idVal);
+
+            sb.$('select[name=order_addr_area_id]').val(boCustAddress.order_addr_area_id);
+
+            sb.$('select[name=addr_city_id]').html('');
+            sb.Address.getCityList(boCustAddress.order_addr_area_id, function() {
+                sb.$('select[name=addr_city_id]').val(boCustAddress.order_addr_city_id);
+            });
+            sb.$('input[name=first_name]').val(boCustAddress.first_name);
+            sb.$('input[name=last_name]').val(boCustAddress.last_name);
+            sb.$('select[name=title]').val(boCustAddress.title);
+            sb.$('input[name=co]').val(boCustAddress.co);
+            sb.$('input[name=postal_code]').val(boCustAddress.postal_code);
+            sb.$('input[name=street_name]').val(boCustAddress.street_name);
+            sb.$('input[name=street_nr]').val(boCustAddress.street_nr);
+            sb.$('input[name=apartment]').val(boCustAddress.apartment);
+            sb.$('input[name=floor]').val(boCustAddress.floor);
+            sb.$('input[name=description]').val(boCustAddress.description);
+            if(boCustAddress.is_master == 1){
+                sb.$('input[name=is_master]').val(boCustAddress.is_master).attr('checked', 'checked');
+            }
+
+        };
+
+
+        var _onCancelAddressClick = function(e){
+            sb.$self().fadeOut(function(cb){
+                sb.publish({
+                    type : 'customer-address:show'
+                });
+            });
+        };
+
+
+        var _bindEvents = function() {
+            sb.bind('button[name=cancel]', 'click', _onCancelAddressClick);
+        };
+
+
+        return {
+            //init module
+            init : function(){
+                _init();
+                _assignValidator();
+                _bindEvents();
+                sb.subscribe({
+                    'customer-address:add'      : _onCustomerAddressEdit,
+                    'customer-address:edit'     : _onCustomerAddressEdit
+                });
+            },
+            //stop module
+            destroy : function(){}
+        };
+    }
+}

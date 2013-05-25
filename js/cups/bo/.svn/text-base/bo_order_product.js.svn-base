@@ -1,0 +1,1 @@
+var BoOrderProduct = BEST.Core.BoBase.extend(['orderBasketId', 'boArticle', 'amount']);

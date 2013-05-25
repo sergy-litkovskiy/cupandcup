@@ -1,0 +1,26 @@
+function CheckoutAgreeNotLoggedModule() {
+    return function(sb) {
+        var _amount = 0;
+
+
+        var _onChangeTotals = function(data){
+            _amount = data.boBasketTotals.amount;
+            var fn = (_amount > 0) ? 'show' : 'hide';
+            sb.$('a.go-checkout')[fn]();
+            sb.$('div.accept')[fn]();
+        };
+
+
+
+        return {
+            init: function(){
+                sb.subscribe({
+                    'basket-change-totals' : _onChangeTotals
+                });
+            },
+            destroy: function(){
+
+            }
+        };
+    }
+}

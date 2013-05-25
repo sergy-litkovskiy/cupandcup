@@ -1,0 +1,29 @@
+;var PlaceOrderModule = function(sb) {
+
+	var _onPlaceOrder = function(e) {
+		e.preventDefault();
+		var form = sb.$('#form_order_confirm').serialize();
+		sb.Basket.placeOrder(form, function(data, message) {
+			sb.UI.showMessage({
+				'title'     : i18n.thank_you,
+				'message'   : message,
+				'overlayOptions': {
+					onClose : function() {
+						window.location = '/';
+					}
+				}
+			});
+		});
+	};
+	
+	
+	return {
+
+		init : function(){
+			sb.bind('#place_order', 'click', _onPlaceOrder);
+		},
+
+		destroy : function() { }
+		
+	};
+}

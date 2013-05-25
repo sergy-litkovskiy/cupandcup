@@ -1,0 +1,58 @@
+function PromotionSliderModule() {
+    return function(sb) {
+        var imgPath = sb.Config.get('media_server', "") + '/images/promotions/',
+            slides = {
+                "slide-3.jpg" : i18n.slide_3,
+                "slide-4.jpg" : i18n.slide_4,
+                "slide-5.jpg" : i18n.slide_5,
+                "slide-6.jpg" : i18n.slide_6,
+                "slide-7.jpg" : i18n.slide_7
+            },
+            slideTpl    = '<a href="#" title="{{title}}"><img src="' + imgPath + '{{filename}}" alt="{{title}}" /></a>',
+            controlTpl  = '<li><span></span></li>',
+            $ulSwitcher = sb.$("ul.switcher");
+
+
+        var _render = function() {
+            var prop, html;
+            for (prop in slides) {
+                if (!slides.hasOwnProperty(prop)) return;
+                html = slideTpl.replace(/{{title}}/g, slides[prop]).replace(/{{filename}}/g, prop);
+                sb.$self().append(html);
+                $ulSwitcher.append(controlTpl);
+            }
+        };
+
+
+        var _init = function() {
+            $.tools.tabs.addEffect("customEffect", function(tabIndex, done) {
+                var panes = this.getPanes();
+
+                panes.parent().removeClass("active");
+                panes.eq(tabIndex).parent().addClass('active');
+                done.call();
+            });
+
+
+            $ulSwitcher.tabs("div.promotions > a > img", {
+                effect  : 'customEffect',
+                current : "active",
+                rotate  : true,
+                tabs    : 'li'
+            }).slideshow({
+                autoplay  : true,
+                interval  : 3000,
+                clickable : false
+            });
+        };
+
+
+        return {
+            init : function() {
+                _render();
+                _init();
+            },
+            destroy : function() {}
+        }
+    }
+}

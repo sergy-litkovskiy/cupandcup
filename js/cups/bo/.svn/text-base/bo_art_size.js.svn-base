@@ -1,0 +1,1 @@
+var BoArtSize = BEST.Core.BoBase.extend(['id', 'name']);

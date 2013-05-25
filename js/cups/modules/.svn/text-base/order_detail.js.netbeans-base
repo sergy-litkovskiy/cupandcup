@@ -1,0 +1,51 @@
+function OrderDetailModule(){
+    return function(sb){
+
+        var _currentOrderLi;
+        var _orderDetailSelector = 'div.best-order-detail-container';
+
+        var _onOrderDetailLoad = function(orderDetail) {
+            var tmpl    = sb.tmpl('#order-detail'),
+                content = sb.render(tmpl, {
+                    'orderDetail' : orderDetail
+                });
+
+            _currentOrderLi.append(content).find(_orderDetailSelector).slideDown();
+        };
+
+
+        var _showDetailClick = function(e) {
+            e.preventDefault();
+
+            var $self = sb.$(this);
+            _currentOrderLi = $self;
+
+            if($self.hasClass('opened') || $self.hasClass('header')) {
+                return;
+            }
+
+            sb.$('> li').removeClass('opened').find(_orderDetailSelector).slideUp();
+            $self.addClass('opened').find(_orderDetailSelector).slideDown();
+
+            var _orderMasterId = parseInt($self.find('span.number').text());
+            if( ! $self.find(_orderDetailSelector).length ) {
+                sb.Order.getOrderDetail(_orderMasterId, _onOrderDetailLoad);
+            }
+        }
+
+
+        var _bindEvents = function(){
+            sb.bind('> li ', 'click', _showDetailClick);
+        };
+
+
+        return {
+            init : function(){
+                _bindEvents();
+            },
+            destroy : function(){
+
+            }
+        }
+    }
+}

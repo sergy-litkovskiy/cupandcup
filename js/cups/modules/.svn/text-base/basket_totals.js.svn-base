@@ -1,0 +1,92 @@
+;var BasketTotalsModule = function(sb) {
+
+    var _$priceBlock = sb.$('div.price-block');
+
+
+    var _onChangeTotals = function(data){
+console.log(data);
+
+        var _basketTotals = data.boBasketTotals,
+            tmpl    = '{{#formatPrice}}{{price}}{{/formatPrice}}',
+            content = sb.render(tmpl, {
+                price : _basketTotals.totalPrice
+            });
+
+        _$priceBlock.find('p:first > span.price').html(content);
+    };
+
+
+
+    var _onCheckoutAgreeNext = function(data){
+        sb.$self().slideUp();
+    };
+
+
+
+    var _onCheckoutPrev = function() {
+        sb.$self().slideDown();
+    };
+
+
+
+    var _onVoucherShowClick = function(e) {
+        e.preventDefault();
+        sb.$('div.certificate').slideToggle();
+    };
+
+
+
+    var _onVoucherUseClick = function(e) {
+        e.preventDefault();
+        var voucher = {};
+        
+        sb.publish({
+            type : 'apply-voucher',
+            data : {
+                voucher : voucher
+            }
+        });
+    };
+
+
+
+    var _onVoucherListChanged = function(data) {
+console.log(data);
+        var tmpl     = sb.tmpl('#voucher-list'),
+            content  = sb.render(tmpl, {
+                voucherList : data.voucherList
+            });
+
+        sb.$('div.certificate > table > tbody').html(content);
+    };
+
+
+
+    var _init = function() {
+        _$priceBlock.find('p:first').removeClass('sum');
+        _$priceBlock.find('p.discount').hide();
+        _$priceBlock.find('p.price-with-discount').hide();
+    };
+
+
+    var _bindEvents = function() {
+        sb.bind('a.add-certificate', 'click', _onVoucherShowClick);
+        sb.bind('a.use-voucher', 'click', _onVoucherUseClick);
+    };
+
+
+
+    return {
+        init : function() {
+            _init();
+            _bindEvents();
+            sb.subscribe({
+                'basket-change-totals'      : _onChangeTotals,
+                'checkout-agree-next'       : _onCheckoutAgreeNext,
+                'order-checkout-prev'       : _onCheckoutPrev,
+                'voucher-list-changed'      : _onVoucherListChanged
+            });
+        },
+        destroy : function() {}
+    }
+};

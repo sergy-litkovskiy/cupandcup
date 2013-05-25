@@ -1,0 +1,26 @@
+function CustomerWidgetModule() {
+    return function(sb){
+
+        var _onSuccess = function(data) {
+            var tmpl, src;
+
+            src = (data.customer) ? '#customer-widget-logged' : '#customer-widget-not-logged';
+            tmpl = sb.tmpl(src);
+
+            sb.$('span').html(sb.render(tmpl, {
+                customer : data.customer,
+                lang     : sb.Config.get('lang')
+            }));
+        };
+
+
+        return {
+            //init module
+            init : function(){
+                sb.Customer.getInfo(_onSuccess, function(){});
+            },
+            //stop module
+            destroy : function(){}
+        };
+    }
+}

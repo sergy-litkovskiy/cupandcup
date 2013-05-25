@@ -1,0 +1,34 @@
+function SidebarMenuModule() {
+    return function(sb) {
+
+        var _init = function() {
+//            sb.$('> li').removeClass('active').find('ul').hide();
+//            sb.$('> li').not('.active').find('ul').hide();
+        };
+
+
+        var _bindEvents = function() {
+            sb.$('> li > a').unbind('click.SidebarMenu').bind('click.SidebarMenu', function(e){
+                e.preventDefault();
+                
+                var $self = sb.$wrap(this),
+                    $li   = $self.parent();
+
+                if ($li.hasClass('active')) return;
+
+                sb.$('> li').removeClass('active').find('ul').slideUp();
+                $li.addClass('active').find('ul').slideDown();
+
+            });
+        };
+
+
+        return {
+            init : function() {
+                _init();
+                _bindEvents();
+            },
+            destroy : function() {}
+        }
+    }
+}

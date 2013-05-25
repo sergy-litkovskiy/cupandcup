@@ -1,0 +1,31 @@
+function BottomCatalogModule() {
+    return function(sb) {
+
+        var _init = function() {
+            sb.$('> ul > li:first').addClass('active');
+            sb.$('div.content:first').addClass('active');
+        };
+
+
+        var _bindEvents = function() {
+            sb.$('> ul > li').unbind('click.SidebarMenu').bind('click.SidebarMenu', function(e){
+                e.preventDefault();
+                sb.$('> ul > li').removeClass('active');
+                sb.$wrap(this).addClass('active');
+                
+                var id = sb.$wrap(this).attr('parentShopCategoryId');
+                sb.$('div.content').removeClass('active');
+                sb.$('div.content#bottom_catalog_content_div_'+id).addClass('active');
+            });
+        };
+
+
+        return {
+            init : function() {
+                _init();
+                _bindEvents();
+            },
+            destroy : function() {}
+        }
+    }
+}

@@ -1,0 +1,29 @@
+function CustomerAddNewAddressModule() {
+    return function(sb){
+
+        var _onAddAddressClick = function(e) {
+            e.preventDefault();
+            sb.publish({
+                type : 'customer-address:add',
+                data : {
+                    boCustAddress : new BoCustAddress()
+                }
+            });
+        };
+
+
+        var _bindEvents = function() {
+            sb.bind('a.add-address', 'click', _onAddAddressClick);
+        };
+
+
+        return {
+            //init module
+            init : function(){
+                _bindEvents();
+            },
+            //stop module
+            destroy : function(){}
+        };
+    }
+}

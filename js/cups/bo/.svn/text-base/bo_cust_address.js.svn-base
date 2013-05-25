@@ -1,0 +1,5 @@
+var BoCustAddress = BEST.Core.BoBase.extend(['id', 'title', 'first_name', 'last_name', 
+                                                'postal_code', 'addr_area_id', 'addr_city_id', 'alt_city', 
+                                                'street_name', 'street_nr', 'floor', 'apartment', 'co', 
+                                                'description', 'is_master']);
+

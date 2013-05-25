@@ -1,0 +1,84 @@
+function CustomerEditAddressesModule() {
+    return function(sb){
+
+        var _addressList = [],
+            _addressIdMap = {};
+
+
+        var _init = function() {
+            sb.Address.getList(function(boCustAddressList) {
+                _addressList = boCustAddressList;
+                _mapAddressListById();
+                _renderAddressList();
+                _bindEvents();
+            });
+        };
+
+
+        var _mapAddressListById = function() {
+            var i, len, boCustAddress;
+
+            for (i = 0, len = _addressList.length; i < len; i++) {
+                boCustAddress = _addressList[i];
+                _addressIdMap[boCustAddress.id] = boCustAddress;
+            }
+        };
+
+
+        var _renderAddressList = function() {
+            var tmpl = sb.tmpl('#address-item-tmpl');
+            sb.$self().html(sb.render(tmpl, {addressList : _addressList}));
+        };
+
+
+        var _onAddressEditClick = function(e) {
+            e.preventDefault();
+            var custAddressId = sb.$wrap(this).parent().attr('custaddress-id');
+
+            if (!custAddressId in _addressIdMap) {
+                sb.showError('Address not found');
+                return;
+            }
+
+            _hide(function(){
+                sb.publish({
+                    type : 'customer-address:edit',
+                    data : {
+                        boCustAddress : _addressIdMap[custAddressId]
+                    }
+                });
+            });
+        };
+
+
+
+        var _bindEvents = function() {
+            sb.bind('div.container a.edit', 'click', _onAddressEditClick);
+        };
+
+
+
+        var _hide = function(cb) {
+            sb.$self().fadeOut(cb);
+        }
+
+
+        var _show = function() {
+            sb.$self().fadeIn();
+        }
+
+
+        return {
+            //init module
+            init : function(){
+                _init();
+                sb.subscribe({
+                    'customer-address:add' : _hide,
+                    'customer-address:show' : _show
+                });
+            },
+            //stop module
+            destroy : function(){}
+        };
+    }
+}

@@ -1,0 +1,51 @@
+function CustomerPersonalInfoModule(params) {
+    return function(sb){
+        var _validator;
+
+
+        var _assignValidator = function() {
+            _validator = sb.$('form').validate({
+                               rules: {
+                                    email: {
+                                        required: false,
+                                        email: true,
+                                        remote: {
+                                            url: "/ajax/check_email",
+                                            type: "post",
+                                            data: {
+                                                email: $(this).value,
+                                                check: 'is_exist'
+                                            }
+                                        }
+                                    }
+                                },
+                                messages: {
+                                    email: {
+                                        remote: i18n.email_allready_exist
+                                    }
+                                }});
+        };
+
+
+        var _bindEvent = function() {
+            sb.bind('select.month, select.year', 'change', function(e){
+                sb.publish({
+                    type : 'on-change-month'
+                });
+            });
+        }
+
+        return {
+            //init module
+            init : function(){
+                _assignValidator();
+                _bindEvent();
+                sb.subscribe({
+                    'on-change-month' : sb.Calendar.daysInMonth()
+                })
+            },
+            //destroy module
+            destroy : function(){}
+        };
+    }
+}

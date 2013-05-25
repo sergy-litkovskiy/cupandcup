@@ -1,0 +1,241 @@
+function BasketModelModule() {
+    return function(sb){
+        var _productList  = {},
+            _totals       = [],
+            _voucherList  = {},
+            _currentVoucher = {},
+            _discount     = 0;
+
+
+
+        var _onChangeAmount = function(){
+            _voucherListChanged();
+            _publishChangeProducts();
+            _publishChangeTotals();
+        };
+
+
+
+        var _publishChangeProducts = function(){
+            sb.publish({
+                type : 'basket-change-products',
+                data : {
+                    productList : _productList
+                }
+            });
+        };
+
+
+
+        var _publishChangeTotals = function(){
+            _recalculateTotals();
+
+            sb.publish({
+                type : 'basket-change-totals',
+                data : {
+                    boBasketTotals: _totals
+                }
+            });
+        };
+
+
+
+        var _onLoadBasket = function(data){
+            var i, article, product,
+                productList = data.productList;
+
+            for (i in productList) {
+                if (!productList.hasOwnProperty(i)) return;
+                product = productList[i];
+                article = new BoArticle({
+                    'artColorSizeMatchId'   : product.art_color_size_match_id
+                  , 'artColorSizeNr'        : product.art_color_size_nr
+                  , 'boArtSize' : new BoArtSize({
+                        'id'    : product.art_size_id
+                      , 'name'  : product.art_size_name
+                    })
+                  , 'boArtColorMatch' : new BoArtColorMatch({
+                      'id'              : product.art_color_match_id
+                    , 'headline'        : product.art_color_match_headline
+                    , 'imagePath'       : product.art_images_img_small
+                    , 'artColorName'    : product.art_color_name
+                    , 'shopCategoryId'  : product.shop_category_master_id
+                  })
+                  , 'sellPrice' : product.sell_price
+                });
+                _addProduct(product.id, article, product.amount);
+            }
+
+            _voucherList = data.voucherList;
+
+            _onChangeAmount();
+        };
+
+
+
+        var _addProduct = function(orderBasketId, boArticle, amount){
+            var index = boArticle.artColorSizeMatchId;
+            if (typeof _productList[index] === 'undefined') {
+                _productList[index] = new BoOrderProduct({
+                    'orderBasketId' : orderBasketId
+                  , 'boArticle'     : boArticle
+                  , 'amount'        : amount
+                });
+            } else {
+                _productList[index].amount += amount;
+            }
+        }
+
+
+
+        var _tryAddProduct = function(data){
+            if(!_validateAmount(data)) return;
+
+            sb.Basket.tryAddProduct(data.boArticle, data.amount, function(respData){
+                _addProduct(respData.order_basket_id, data.boArticle, data.amount);
+                _voucherList = data.voucherList;
+                _onChangeAmount();
+                if (typeof data.onSuccess === 'function') {
+                    data.onSuccess();
+                }
+            }, data.onError);
+        };
+
+
+
+        var _validateAmount = function(data){
+            var basketItem      = _productList[data.boArticle.artColorSizeMatchId],
+                inBasketAmount  = (basketItem && basketItem.amount) || 0;
+
+            if (!sb.type.isNum(data.amount) || data.amount < 1) {
+                data.onError(i18n.only_digits);
+                return false;
+            }
+
+            if (parseInt(data.amount) + parseInt(inBasketAmount) > sb.Config.get('max_allowed_products_in_basket')) {
+                data.onError(i18n.only_digits);
+                return false;
+            }
+
+            return true;
+        };
+
+
+
+        var _tryChangeAmount = function(data){
+            var id      = data.artColorSizeMatchId || null,
+                amount  = data.amount,
+                product = _productList[id] || null;
+
+            if (!product) {
+                data.onError(i18n.unknown_product);
+                return;
+            }
+            if (!_validateChangeAmount) return;
+
+            sb.Basket.tryChangeAmount(id, product.orderBasketId, amount, function(data){
+                _productList[id].amount = amount;
+                _voucherList = data.voucherList;
+                _onChangeAmount();
+            },
+            data.onError);
+        };
+
+
+
+        var _validateChangeAmount = function(data) {
+            var amount  = data.amount;
+            if (!sb.type.isNum(amount) || amount < 1 || amount > sb.Config.get('max_allowed_products_in_basket')) {
+                data.onError(i18n.only_digits);
+                return false;
+            }
+
+            return true;
+        };
+
+
+
+        var _tryRemoveProduct = function(data){
+            var id      = data.artColorSizeMatchId || null,
+                product = _productList[id] || null;
+
+            if (product) {
+                sb.Basket.tryRemoveProduct(product.orderBasketId, function(data){
+                    delete _productList[id];
+                    _voucherList = data.voucherList;
+                    _onChangeAmount();
+                });
+            }
+        };
+
+
+        var _recalculateTotals = function(){
+            var i;
+
+            _currentVoucher = _getVoucherById(typeof _currentVoucher.id !== 'undefined' ? _currentVoucher.id : null);
+            _discount       = typeof _currentVoucher.price !== 'undefined' ? _currentVoucher.price : 0;
+
+            _totals = new BoBasketTotals({
+                'amount'        : 0
+              , 'totalPrice'    : 0
+              , 'discount'      : _discount
+              , 'discountPrice' : 0
+            });
+
+            for (i in _productList) {
+                _totals.amount     += parseInt(_productList[i].amount);
+                _totals.totalPrice += _productList[i].boArticle.sellPrice * _productList[i].amount;
+            }
+            _totals.discountPrice = _totals.discount > 0
+                                  ? _totals.totalPrice - _totals.discount
+                                  : _totals.totalPrice;
+        };
+
+
+        var _getVoucherById = function(id) {
+            for (var item in _voucherList) {
+                if (_voucherList[item].id == id) {
+                    return _voucherList[item];
+                }
+            }
+            return {};
+        };
+
+
+        var _applyVoucher = function(data){
+            _currentVoucher = data.voucher;
+            _publishChangeTotals();
+        };
+
+
+        var _removeVoucher = function(){
+
+        };
+
+
+        var _voucherListChanged = function(){
+            sb.publish({
+                type : 'voucher-list-changed'
+              , data : {
+                  voucherList : _voucherList
+              }
+            });
+        }
+
+        return {
+            init: function(){
+                sb.subscribe({
+                    'app-start'                : function(){
+                        sb.Basket.load(_onLoadBasket);
+                    }
+                  , 'basket-try-add-product'    : _tryAddProduct
+                  , 'basket-try-remove-product' : _tryRemoveProduct
+                  , 'basket-try-change-amount'  : _tryChangeAmount
+                  , 'apply-voucher'             : _applyVoucher
+                  , 'remove-voucher'            : _removeVoucher
+                });
+            },
+            destroy: function(){}
+        };
+    }
+}

@@ -1,0 +1,139 @@
+function OrderCheckoutPhoneConfirmationModule() {
+    return function(sb){
+        var _data = {
+                address_id  : 0,
+                delivery_id : 0,
+                payment_id  : 0
+            };
+
+
+        var _init = function() {
+            sb.$self().hide();
+        };
+
+
+        var _show = function() {
+            sb.$self().fadeIn();
+        };
+
+
+        var _hide = function(cb) {
+            sb.$self().fadeOut(cb);
+        };
+
+
+        var _clearCheckbox = function(){
+            sb.$('input#confirm_phone').removeProp('checked');
+        };
+
+
+        var _removeErrorMess = function(){
+          sb.$('p.error-message').remove();
+        };
+
+
+        var _onAddressAddNew = function() {
+            _hide();
+            _data.address_id = 0;
+        };
+
+
+        var _onAddressSelect = function(data) {
+            _hide();
+            _data.address_id = data.addressId || 0;
+        };
+
+
+        var _onDeliverySelect = function(data) {
+            _hide();
+            var boDeliveryMethod = data.boDeliveryMethod || 0;
+            _data.delivery_id = boDeliveryMethod && boDeliveryMethod.id || 0;
+        };
+
+
+        var _onPaymentSelect = function(data) {
+            _data.payment_id = data.paymentMethodId || 0;
+            _clearCheckbox();
+            if(_data.payment_id != 0 && _data.delivery_id != 0 && _data.address_id != 0){
+                _show();
+            } else {
+                _hide();
+            }
+
+        };
+
+
+        var _renderErrorMess = function(errorMess){
+            _removeErrorMess();
+            var html = '';
+            html += '<p class="error-message">' + errorMess + '</p>';
+            sb.$('input[name=phone_number]').after(html);
+        };
+
+
+        var _publishNotConfirmed = function(){
+            sb.publish({
+                type : 'order-checkout-phone-confirmation:not-confirmated-phone'
+            });
+        };
+
+
+        var _phoneValidate = function(phoneNumber){
+            var errorMess, expr = new RegExp(/^3[0-9]{11}$/);
+
+            if(phoneNumber != 0 && phoneNumber.match(expr)) return true;
+            if(!expr.test(phoneNumber)){ errorMess = i18n.mobileFormat; }
+            if(phoneNumber == 0){ errorMess = i18n.mobileNotEmpty; }
+
+            _renderErrorMess(errorMess);
+            _clearCheckbox();
+            _publishNotConfirmed();
+
+            return false;
+        }
+
+
+        var _checkValidPhone = function() {
+            var phoneNumber;
+            phoneNumber = sb.$('input[name=phone_number]').val() || 0;
+            if(_phoneValidate(phoneNumber)){
+                _removeErrorMess();
+                return true;
+            };
+
+            return false;
+        };
+
+
+        var _onCheckboxSelect = function() {
+            if($(this).attr('checked')){
+                if(_checkValidPhone()){
+                    sb.publish({
+                        type : 'order-checkout-phone-confirmation:confirmated-phone'
+                    });
+                };
+            }
+        };
+
+
+        var _bindEvents = function() {
+            sb.bind('input#confirm_phone', 'change', _onCheckboxSelect);
+            sb.bind('input[name=phone_number]', 'change', _checkValidPhone);
+        };
+
+
+        return {
+            init : function(){
+                _init();
+                sb.subscribe({
+                    'order-checkout-address:add-new'                    : _onAddressAddNew,
+                    'order-checkout-address:select'                     : _onAddressSelect,
+                    'order-checkout-delivery-payment:select-delivery'   : _onDeliverySelect,
+                    'order-checkout-delivery-payment:select-payment'    : _onPaymentSelect
+                });
+                _bindEvents();
+            },
+            destroy : function(){ }
+        };
+    }
+}

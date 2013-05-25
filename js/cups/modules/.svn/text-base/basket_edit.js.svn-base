@@ -1,0 +1,110 @@
+;var BasketEditModule = function(sb) {
+    var _productList = {};
+
+
+    var _onRemoveFromBasketClick = function(e) {
+        e.preventDefault();
+        var $tr = sb.$wrap(this).closest('tr');
+        sb.UI.showDialog({
+            yes : function(){
+                var artColorSizeMatchId = parseInt($tr.find('input[name="art_color_size_match_id"]').val());
+                if (!_productList[artColorSizeMatchId]) return;
+
+                sb.publish({
+                    type : 'basket-try-remove-product',
+                    data : {
+                        artColorSizeMatchId : artColorSizeMatchId
+                    }
+                });
+            }
+          , no : function(){}
+          , message : i18n.ask_remove_product_from_basket
+        })
+    };
+
+
+
+    var _onChangeAmountClick = function(e) {
+        e.preventDefault();
+        var $tr = sb.$wrap(this).closest('tr'),
+            artColorSizeMatchId = parseInt($tr.find('input[name="art_color_size_match_id"]').val()),
+            amount              = parseInt($tr.find('select[name="amount"]').val());
+
+        sb.publish({
+            'type' : 'basket-try-change-amount'
+          , 'data' : {
+              'artColorSizeMatchId' : artColorSizeMatchId
+            , 'amount'              : amount
+            , 'onError'             : function(msg){
+                if (typeof msg !== 'undefined') {
+                    sb.UI.showError(msg);
+                }
+                $tr.find('input[name="amount"]').val($tr.find('.recalc-qty').attr('rel'));
+            }
+          }
+        });
+    };
+
+
+
+    var _onChangeProducts   = function(data){
+        var tmpl, i, product;
+
+        _productList = data.productList;
+        tmpl = sb.tmpl('#basket-product-item');
+        sb.$('tbody').html('');
+
+        for (i in _productList) {
+            if (!_productList.hasOwnProperty(i)) return;
+            product = _productList[i];
+
+            sb.$('tbody').append(sb.render(tmpl, {
+                product     : product,
+                totalPrice  : product.amount * product.boArticle.sellPrice,
+                oldPrice    : (product.msrpPrice - product.sellPrice > 0) ? product.msrpPrice : false,
+                selectAmount : function() {
+                    return function(options) {
+                        var amount  = product.amount,
+                            pattern = '<option value="'+amount+'">'+amount+'</option>',
+                            target  = '<option value="'+amount+'" selected="selected">'+amount+'</option>';
+                        return options.replace(new RegExp(pattern), target);
+                    }
+                },
+                item : [1, 2, 3, 4, 5]
+            }));
+        }
+
+        _bindEvents();
+    };
+
+
+
+    var _onCheckoutAgreeNext = function(data){
+        sb.$self().hide();
+    };
+
+
+
+    var _onCheckoutPrev = function() {
+        sb.$self().show();
+    };
+
+
+
+    var _bindEvents = function() {
+        sb.bind('a.del', 'click.removeFromBasket', _onRemoveFromBasketClick);
+        sb.bind('select[name=amount]', 'change.amount', _onChangeAmountClick);
+    };
+
+
+    return {
+        init : function() {
+            sb.subscribe({
+                'basket-change-products'    : _onChangeProducts,
+                'checkout-agree-next'       : _onCheckoutAgreeNext,
+                'order-checkout-prev'       : _onCheckoutPrev
+            });
+        },
+        destroy : function() {}
+    }
+};

@@ -1,0 +1,26 @@
+function CustomerRegistrationFinishModule() {
+    return function(sb){
+        var _validator;
+
+        /**
+         * Assign validator
+         */
+        var _assignValidator = function() {
+            _validator = sb.$('form').validate();
+        };
+        
+        var _daysInMonth = function() {
+            sb.Calendar.daysInMonth();
+        };
+
+        return {
+            //init module
+            init : function(){
+                _assignValidator();
+                _daysInMonth();
+            },
+            //stop module
+            destroy : function(){}
+        };
+    }
+}

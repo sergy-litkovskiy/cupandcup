@@ -1,0 +1,64 @@
+function CouponActivationModule() {
+    return function(sb){
+
+        var _init = function() {
+            sb.$('input#field-code').val('');
+            sb.$('input#field-code').Watermark(i18n.enter_coupon_code_or_gift_card);
+        };
+
+
+        var _onSubmitSuccess = function(){
+            sb.UI.showMessage({
+                title   : i18n.congratulations,
+                message : i18n.coupon_activated_successfully,
+                overlayOptions: {
+                    onClose: function(){
+                        window.location.reload();
+                    }
+                }
+            });
+        };
+
+
+        var _onSubmitError = function(mess){
+            sb.UI.showError(mess);
+            return false;
+        };
+
+
+        var _tryApplyCoupon = function(couponCode){
+            sb.Voucher.activateCoupon(couponCode, _onSubmitSuccess, _onSubmitError);
+        };
+
+
+        var _validateCouponCode = function(couponCode){
+            if(couponCode == 0){
+                sb.UI.showError(i18n.enter_coupon_code_or_gift_card);
+                return false;
+            }
+            _tryApplyCoupon(couponCode);
+        };
+
+
+        var _onApplyCoupon = function(e){
+            e.preventDefault();
+            var code        = sb.$('input#field-code').val(),
+                couponCode  = (code && code != i18n.enter_coupon_code_or_gift_card) ? code : 0;
+            _validateCouponCode(couponCode);
+        };
+
+
+        var _bindEvents = function() {
+            sb.bind('button', 'click', _onApplyCoupon);
+        };
+
+
+        return {
+            init : function(){
+                _init();
+                _bindEvents();
+            },
+            destroy : function(){ }
+        };
+    }
+}

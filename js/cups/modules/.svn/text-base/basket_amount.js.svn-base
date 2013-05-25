@@ -1,0 +1,35 @@
+function BasketAmountModule() {
+    return function(sb){
+        var $quantity = sb.$('span.quantity');
+
+        var _init = function(){
+            $quantity.hide();
+        };
+
+
+        var _onChangeAmount = function(data) {
+            var amount;
+
+            amount = parseInt(data.boBasketTotals.amount);
+
+            if (amount > 0) {
+                sb.$self().addClass('basketful');
+                $quantity.text(amount).show();
+            } else {
+                sb.$self().removeClass('basketful');
+                $quantity.text('').hide();
+            }
+        };
+
+
+        return {
+            init : function(){
+                _init();
+                sb.subscribe({
+                    'basket-change-totals' : _onChangeAmount
+                });
+            },
+            destroy : function(){ }
+        };
+    }
+}

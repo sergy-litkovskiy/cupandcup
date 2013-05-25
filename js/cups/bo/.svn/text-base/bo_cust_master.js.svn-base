@@ -1,0 +1,4 @@
+var BoCustMaster = BEST.Core.BoBase.extend(['id', 'shop_master_id', 'first_name', 'last_name',
+                                                'middle_name', 'gender', 'birthdate', 'email',
+                                                'mobile_phone', 'language_id', 'shop_cust_master_id']);
+

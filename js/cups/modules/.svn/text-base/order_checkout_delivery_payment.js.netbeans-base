@@ -1,0 +1,146 @@
+function OrderCheckoutDeliveryPaymentModule() {
+    return function(sb){
+        var _deliveryMethodList = {},
+            _deliveryMethodMap  = {},
+            _deliveryPaymentMethodMap = {},
+            _data = {
+                address_id  : 0,
+                delivery_id : 0,
+                payment_id  : 0
+            };
+
+
+        var _init = function() {
+            sb.$self().hide();
+        };
+
+
+        var _mapDeliveryMethodList = function() {
+            var i, len, id;
+
+            _deliveryMethodMap  = {};
+            for (i = 0, len = _deliveryMethodList.length; i < len; i++) {
+                id = _deliveryMethodList[i].id;
+                _deliveryMethodMap[id] = _deliveryMethodList[i];
+            }
+        };
+
+
+
+        var _onAddressSelect = function(data) {
+            _data.address_id = data.addressId;
+            _loadMethods();
+        };
+
+        var _loadMethods = function() {
+            if (!_data.address_id) {
+                _hide();
+                return;
+            }
+
+            sb.DeliveryPaymentMethod.load(_data.address_id, function(data) {
+                _deliveryMethodList       = data.deliveryMethodList;
+                _deliveryPaymentMethodMap = data.deliveryPaymentMethodMap;
+                _mapDeliveryMethodList();
+                _renderDelivery();
+                _clearPayment();
+                _show();
+            });
+        };
+
+
+
+        var _renderDelivery = function() {
+            var deliveryTmpl = '<option></option>{{#deliveryList}}<option value="{{id}}">{{description}} ({{#formatPrice}}{{this_delivery_cost}}{{/formatPrice}})</option>{{/deliveryList}}',
+                rendered     = sb.render(deliveryTmpl, {
+                    deliveryList : _deliveryMethodList,
+                    formatPrice : function(){
+                        return function(price) {
+                            return sb.Price.format(price) + ' ' + i18n.currency;
+                        }
+                    }
+                });
+
+            sb.$('#field-delivery').html(rendered).attr("disabled", false);
+        };
+
+
+
+        var _renderPayment = function() {
+            var paymentMethodList = _deliveryPaymentMethodMap[_data.delivery_id];
+
+            if (paymentMethodList) {
+                var paymentTmpl = '<option></option>{{#paymentList}}<option value="{{id}}">{{description}}</option>{{/paymentList}}',
+                    rendered    = sb.render(paymentTmpl, {paymentList : paymentMethodList});
+                sb.$('#field-payment').html(rendered).attr("disabled", false);
+                return;
+            }
+
+            _clearPayment();
+        };
+
+
+
+        var _clearPayment = function() {
+            sb.$('#field-payment').html('').attr("disabled", true);
+        };
+
+
+
+        var _show = function() {
+            sb.$self().fadeIn();
+        };
+
+
+        var _hide = function(cb) {
+            sb.$self().fadeOut(cb);
+        };
+
+
+
+        var _onDeliverySelect = function() {
+            var selectedDeliveryId = sb.$wrap(this).find('option:selected').val();
+            _data.delivery_id = selectedDeliveryId || 0;
+            _data.payment_id  = 0;
+            _renderPayment();
+            sb.publish({
+                type : 'order-checkout-delivery-payment:select-delivery',
+                data : {
+                    boDeliveryMethod : _deliveryMethodMap[selectedDeliveryId]
+                }
+            });
+        };
+
+
+        var _onPaymentSelect = function() {
+            var selectedPaymentId = sb.$wrap(this).find('option:selected').val();
+            _data.payment_id = selectedPaymentId || 0;
+            sb.publish({
+                type : 'order-checkout-delivery-payment:select-payment',
+                data : {
+                    paymentMethodId : selectedPaymentId
+                }
+            });
+        };
+
+
+        var _bindEvents = function() {
+            sb.bind('#field-delivery', 'change', _onDeliverySelect);
+            sb.bind('#field-payment', 'change', _onPaymentSelect);
+        };
+
+
+        return {
+            init : function(){
+                _init();
+                sb.subscribe({
+                    'order-checkout-address:select'     : _onAddressSelect,
+                    'order-checkout-address:add-new'    : _hide //,
+//                    'order-checkout-new-address:save'   : _onAddressAdd
+                });
+                _bindEvents();
+            },
+            destroy : function(){ }
+        };
+    }
+}

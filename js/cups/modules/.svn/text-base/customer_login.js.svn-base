@@ -1,0 +1,34 @@
+function CustomerLoginModule() {
+    return function(sb){
+        var _validator;
+
+        /**
+         * Assign e-mail validator
+         */
+        var _assignValidator = function() {
+            _validator = sb.$('form').validate();
+        };
+
+
+        var _onRestorePasswordClick = function(e) {
+            e.preventDefault();
+            sb.publish({
+                type : 'login-restore-password'
+            });
+        };
+
+        var _bindRestorePassword = function() {
+            sb.bind('.btn > a', 'click', _onRestorePasswordClick);
+        };
+
+        return {
+            //init module
+            init : function(){
+                _assignValidator();
+                _bindRestorePassword();
+            },
+            //stop module
+            destroy : function(){}
+        };
+    }
+}

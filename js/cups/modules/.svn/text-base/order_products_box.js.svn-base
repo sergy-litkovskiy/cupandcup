@@ -1,0 +1,31 @@
+function LanguageSwitcherModule() {
+    return function(sb){
+        var _initSwitcher = function(){
+
+            sb.bind('span.value', 'click', function(e){
+                e.preventDefault();
+                sb.$('ul.languages').slideDown(200).delay(3000).slideUp(200);
+            });
+
+
+            sb.bind('ul.languages > li', 'click', function(e){
+                e.preventDefault();
+                var lang             = this.title;
+                var pattWithSlash    = /(\/ru\/|\/ua\/)/i;
+                var pattWithoutSlash = /(\/ru$|\/ua$)/i;
+                if ( window.location.href.search(pattWithSlash) !== -1) {
+                    window.location = window.location.href.replace(pattWithSlash, '/' + lang + '/');
+                } else if (window.location.href.search(pattWithoutSlash)) {
+                    window.location = '/' + lang;
+                }
+            });
+        };
+
+        return {
+            init : function(){
+                _initSwitcher();
+            },
+            destroy : function(){ }
+        };
+    }
+}

@@ -1,0 +1,47 @@
+;var ImageNavigatorModule = function(sb) {
+    
+    var isDisplayedZoomingBlock = false,
+        // Changing image, viewing in zooming block
+        onChangeAction = function(item) {
+            if (isDisplayedZoomingBlock) {
+                var img_src = item.getAttribute('original_image');
+                if (img_src) {
+                    $('#z_img').zooming({url: img_src});
+                    $('.zoom-block').addClass('visible');
+                }
+            }
+        },
+        // Showing zooming block with current image inside
+        onClickAction = function(item) {
+            var img_src = item.getAttribute('original_image');
+            if (img_src) {
+                $('#z_img').zooming({url: img_src});
+                $('.zoom-block').addClass('visible');
+                isDisplayedZoomingBlock = true;
+            }
+        };
+
+    return {
+
+        init : function() {
+            
+            // Add action to zooming block
+            $('.close_zooming').click(function() {
+                $('.zoom-block').removeClass('visible');
+                isDisplayedZoomingBlock = false;
+            });
+            
+            // Init gallery plug-in
+            $('#thumbs').artgallery({
+                dispalayImageSel : '#image_set',
+                onClick          : onClickAction,
+                onChange         : onChangeAction
+            });
+            
+        },
+
+        destroy : function() {}
+
+    };
+    
+}

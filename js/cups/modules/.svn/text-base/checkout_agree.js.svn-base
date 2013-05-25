@@ -1,0 +1,58 @@
+function CheckoutAgreeModule() {
+    return function(sb) {
+        var _$agree = sb.$('.agree-check'),
+            _amount = 0;
+
+
+        var _isAgree = function() {
+            return _$agree.is(':checked');
+        };
+
+
+        var _onOrderCheckoutClick = function(e){
+            e.preventDefault();
+            return _isAgree() ? _onNextClick() : sb.UI.showError(i18n.error_accept_agreement);
+        };
+
+        var _onNextClick = function() {
+            sb.$self().slideToggle();
+
+            sb.publish({
+                type: 'checkout-agree-next'
+            });
+        };
+
+
+        var _bindEvents = function() {
+            sb.bind('a.go-checkout', 'click.orderCheckout', _onOrderCheckoutClick);
+        };
+
+
+        var _onCheckoutPrev = function() {
+            sb.$self().slideDown();
+        };
+
+
+        var _onChangeTotals = function(data){
+                _amount = data.boBasketTotals.amount;
+                var fn = (_amount > 0) ? 'show' : 'hide';
+                sb.$('a.go-checkout')[fn]();
+                sb.$('div.accept')[fn]();
+        };
+
+
+
+        return {
+            init: function(){
+                _bindEvents();
+                sb.subscribe({
+                    'order-checkout-prev'  : _onCheckoutPrev,
+                    'basket-change-totals' : _onChangeTotals
+                });
+            },
+            destroy: function(){
+
+            }
+        };
+    }
+}

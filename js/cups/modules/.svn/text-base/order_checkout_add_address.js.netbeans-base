@@ -1,0 +1,84 @@
+function OrderCheckoutNewAddressModule() {
+    return function(sb){
+
+        var _init = function() {
+            sb.$self().hide();
+            sb.Address.citySelect();
+        };
+
+
+        var _onAddAddressCancel = function(e) {
+            e.preventDefault();
+            _hide(function(){
+                sb.publish({
+                    type : 'order-checkout-new-address:cancel'
+                });
+            });
+        };
+
+
+        var _show = function() {
+            sb.$self().fadeIn();
+        };
+
+
+        var _hide = function(cb) {
+            sb.$self().fadeOut(cb);
+        };
+
+
+        var _makeCustAddress = function() {
+            var boCustAddress = new BoCustAddress();
+
+            boCustAddress.first_name    = sb.$("input[name=first_name]").val();
+            boCustAddress.last_name     = sb.$("input[name=last_name]").val();
+            boCustAddress.title         = sb.$("select[name=title] option:selected").val();
+            boCustAddress.co            = sb.$("input[name=co]").val();
+            boCustAddress.postal_code   = sb.$("input[name=postal_code]").val();
+            boCustAddress.addr_area_id  = sb.$("select[name=addr_area_id] option:selected").val();
+            boCustAddress.addr_city_id  = sb.$("select[name=addr_city_id] option:selected").val();
+            boCustAddress.alt_city      = sb.$("input[name=alt_city]").val();
+            boCustAddress.street_name   = sb.$("input[name=street_name]").val();
+            boCustAddress.street_nr     = sb.$("input[name=street_nr]").val();
+            boCustAddress.floor         = sb.$("input[name=floor]").val();
+            boCustAddress.apartment     = sb.$("input[name=apartment]").val();
+            boCustAddress.description   = sb.$("input[name=description]").val();
+            boCustAddress.is_master     = 0;
+
+            return boCustAddress;
+        };
+
+
+        var _onAddressSaveClick = function(e) {
+            e.preventDefault();
+            sb.Address.save(_makeCustAddress(), function(boCustAddress){
+                _hide(function(){
+                    sb.publish({
+                       type : 'order-checkout-new-address:save',
+                       data : {
+                           boCustAddress : boCustAddress
+                       }
+                    });
+                });
+            });
+        };
+
+
+        var _bindEvents = function() {
+            sb.bind('span.discard', 'click', _onAddAddressCancel);
+            sb.bind('button.save-address', 'click', _onAddressSaveClick)
+        };
+
+
+        return {
+            init : function(){
+                _init();
+                sb.subscribe({
+                    'order-checkout-address:add-new' : _show
+                });
+                _bindEvents();
+            },
+            destroy : function(){ }
+        };
+    }
+}

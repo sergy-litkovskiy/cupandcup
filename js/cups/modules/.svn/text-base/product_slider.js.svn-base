@@ -1,0 +1,16 @@
+function ProductSliderModule() {
+    return function(sb) {
+
+        var _bindEvents = function() {
+            sb.$('ul').jcarousel({"scrollInc": 1, "animationSpeed":    0.9});
+        };
+
+
+        return {
+            init : function() {
+                _bindEvents();
+            },
+            destroy : function() {}
+        }
+    }
+}

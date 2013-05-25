@@ -1,0 +1,1 @@
+var BoArticle = BEST.Core.BoBase.extend(['artColorSizeMatchId', 'boArtSize', 'boArtColorMatch', 'artColorSizeNr', 'sellPrice', 'msrpPrice']);
