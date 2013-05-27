@@ -48,15 +48,16 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-//$db['default']['hostname'] = 'localhost';
+$db['default']['hostname'] = 'localhost';
 //$db['default']['hostname'] = 'db7.freehost.com.ua';
 //$db['default']['username'] = 'cupandcup_litko';
 //$db['default']['password'] = 'papercup';
-//$db['default']['database'] = 'cupandcup_paper';
-$db['default']['hostname'] = "db8.freehost.com.ua";
+$db['default']['database'] = 'cupandcup_paper';
+
+//$db['default']['hostname'] = "db8.freehost.com.ua";
 $db['default']['username'] = "springcon_spring";
 $db['default']['password'] = "renault2004";
-$db['default']['database'] = "springcon_cupandcuppaper";
+//$db['default']['database'] = "springcon_cupandcuppaper";
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

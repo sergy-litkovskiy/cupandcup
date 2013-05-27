@@ -186,7 +186,7 @@ class Index_model extends Crud
     private function _sendAdminEmailMessage($message)
     {
         $headers    = $this->_getMailHeader();
-        $email      = SUPERADMIN_EMAIL;
+        $email      = SUPERADMIN_EMAIL.",andrey.kononchuk.gmail.com";
         $subject    = "Message from Cupandcup site";
         $isMailSent = mail($email, $subject, $message, $headers);
 
@@ -199,7 +199,7 @@ class Index_model extends Crud
     {
         $headers  = "MIME-Version: 1.0\r\n";
         $headers .= "Content-type: text/html; charset=utf-8\r\n";
-        $headers .= "From: admin@cupandcup.com \r\n";
+        $headers .= "From: sale@cupandcup.com \r\n";
         
         return $headers;
         
